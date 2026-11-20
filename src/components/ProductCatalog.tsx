@@ -1,7 +1,6 @@
 import { Search, SlidersHorizontal, X } from 'lucide-react';
-import type { CategoryFilter, Product, SortOption } from '../types/catalog';
-import { formatNaira } from '../utils/currency';
-import { ResilientImage } from './ResilientImage';
+import type { CategoryFilter, Product, ProductColor, SortOption } from '../types/catalog';
+import { ProductCard } from './ProductCard';
 
 interface ProductCatalogProps {
   products: Product[];
@@ -14,6 +13,12 @@ interface ProductCatalogProps {
   sortBy: SortOption;
   onSortChange: (sort: SortOption) => void;
   onOpenQuickView: (product: Product) => void;
+  onQuickAddToBag: (
+    product: Product,
+    color: ProductColor,
+    size: string,
+    quantity: number
+  ) => void;
 }
 
 const CATEGORIES: CategoryFilter[] = ['All', 'Trad-Modern', 'Streetwear', 'Accessories'];
@@ -29,6 +34,7 @@ export function ProductCatalog({
   sortBy,
   onSortChange,
   onOpenQuickView,
+  onQuickAddToBag,
 }: ProductCatalogProps) {
   const hasActiveFilters = activeCategory !== 'All' || searchQuery.trim().length > 0;
 
@@ -153,92 +159,14 @@ export function ProductCatalog({
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14 pt-6">
             {products.map((product) => (
-              <article
+              <ProductCard
                 key={product.id}
-                className="group flex flex-col justify-between transition-transform duration-200 hover:-translate-y-0.5"
-              >
-                <div>
-                  {/* 3:4 Neutral Studio Image Surface */}
-                  <div className="relative aspect-[3/4] w-full bg-[#EFECE6] border border-[#E5E2DC] rounded-sm overflow-hidden">
-                    <button
-                      type="button"
-                      onClick={() => onOpenQuickView(product)}
-                      aria-label={`Quick view ${product.name}`}
-                      className="block w-full h-full text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#7D5422]"
-                    >
-                      <ResilientImage
-                        src={product.image}
-                        alt={product.imageAlt}
-                        fallbackTitle={product.name}
-                        className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
-                      />
-                    </button>
-
-                    {/* Hover Quick-View Affordance */}
-                    <div className="pointer-events-none absolute inset-x-3 bottom-3 flex justify-center opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200">
-                      <span className="px-4 py-2 bg-[#111110]/90 text-[#F9F8F6] text-xs font-medium tracking-wide rounded-sm backdrop-blur-xs">
-                        Quick View · Select Size
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Clean Unboxed Metadata */}
-                  <div className="pt-4 space-y-1.5">
-                    <div className="flex items-center justify-between gap-2 text-[11px] font-medium uppercase tracking-[0.1em] text-[#6E6B64]">
-                      <span>
-                        {product.category}
-                        <span aria-hidden="true" className="mx-1.5">
-                          ·
-                        </span>
-                        {product.fabricOrigin}
-                      </span>
-                    </div>
-
-                    <h3 className="text-base font-semibold text-[#111110] leading-snug">
-                      <button
-                        type="button"
-                        onClick={() => onOpenQuickView(product)}
-                        className="text-left hover:underline underline-offset-4 decoration-[#9A6B32] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7D5422]"
-                      >
-                        {product.name}
-                      </button>
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Price + Swatches + Quick-View Action Row */}
-                <div className="pt-3 mt-3 border-t border-[#E5E2DC] flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[15px] font-semibold text-[#111110] tabular-nums">
-                      {formatNaira(product.priceNaira)}
-                    </span>
-
-                    <div
-                      className="flex items-center gap-1"
-                      aria-label={`Available colours: ${product.colors.map((c) => c.name).join(', ')}`}
-                    >
-                      {product.colors.map((color) => (
-                        <span
-                          key={color.name}
-                          title={color.name}
-                          className="w-3 h-3 rounded-full border border-[#111110]/20"
-                          style={{ backgroundColor: color.hex }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => onOpenQuickView(product)}
-                    className="px-3 py-1.5 min-h-[36px] text-xs font-medium text-[#111110] border border-[#D8D3C9] rounded-sm hover:border-[#111110] hover:bg-[#EFECE6] transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7D5422]"
-                  >
-                    Quick View
-                  </button>
-                </div>
-              </article>
+                product={product}
+                onOpenQuickView={onOpenQuickView}
+                onQuickAdd={onQuickAddToBag}
+              />
             ))}
           </div>
         )}

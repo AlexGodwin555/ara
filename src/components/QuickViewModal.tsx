@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Check, Minus, Plus, X } from 'lucide-react';
 import type { Product, ProductColor } from '../types/catalog';
 import { formatNaira } from '../utils/currency';
+import { HesitantAddButton } from './HesitantAddButton';
 import { ResilientImage } from './ResilientImage';
 
 interface QuickViewModalProps {
@@ -214,22 +215,23 @@ export function QuickViewModal({ product, onClose, onAddToBag }: QuickViewModalP
                   </button>
                 </div>
 
-                <button
-                  type="button"
+                <HesitantAddButton
                   onClick={handleConfirmAdd}
+                  dodgeDirection="right"
+                  defaultContent={
+                    justAdded ? (
+                      <>
+                        <Check className="w-4 h-4" aria-hidden="true" />
+                        <span>Added to Bag</span>
+                      </>
+                    ) : (
+                      <span>
+                        Add to Bag · <span className="tabular-nums">{formatNaira(totalLinePrice)}</span>
+                      </span>
+                    )
+                  }
                   className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-[#111110] text-[#F9F8F6] text-sm font-medium tracking-wide rounded-sm hover:bg-[#2A2927] transition-colors cursor-pointer whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7D5422]"
-                >
-                  {justAdded ? (
-                    <>
-                      <Check className="w-4 h-4" aria-hidden="true" />
-                      <span>Added to Bag</span>
-                    </>
-                  ) : (
-                    <span>
-                      Add to Bag · <span className="tabular-nums">{formatNaira(totalLinePrice)}</span>
-                    </span>
-                  )}
-                </button>
+                />
               </div>
             </div>
           </div>

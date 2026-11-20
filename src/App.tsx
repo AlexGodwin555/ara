@@ -41,6 +41,8 @@ export default function App() {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [bagOpen, setBagOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>(loadInitialBag);
+  const [bagPulseId, setBagPulseId] = useState(0);
+  const [lastAddedQty, setLastAddedQty] = useState(1);
 
   useEffect(() => {
     try {
@@ -119,8 +121,9 @@ export default function App() {
       ];
     });
 
+    setLastAddedQty(quantity);
+    setBagPulseId((prev) => prev + 1);
     setQuickViewProduct(null);
-    setBagOpen(true);
   };
 
   const handleUpdateQuantity = (key: string, nextQuantity: number) => {
@@ -153,6 +156,8 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-[#F9F8F6] text-[#111110]">
       <Header
         bagCount={bagCount}
+        bagPulseId={bagPulseId}
+        lastAddedQty={lastAddedQty}
         onOpenBag={() => setBagOpen(true)}
         onNavigateCategory={setActiveCategory}
       />
@@ -171,6 +176,7 @@ export default function App() {
           sortBy={sortBy}
           onSortChange={setSortBy}
           onOpenQuickView={setQuickViewProduct}
+          onQuickAddToBag={handleAddToBag}
         />
 
         <AtelierSection />
